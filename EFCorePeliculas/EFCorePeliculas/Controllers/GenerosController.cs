@@ -18,6 +18,7 @@ namespace EFCorePeliculas.Controllers
         [HttpGet]
         public async Task<IEnumerable<Genero>> Get()
         {
+            //return await context.Generos.Where(x => !x.EstaBorrado).OrderBy(g => g.Nombre).ToListAsync();
             return await context.Generos.OrderBy(g => g.Nombre).ToListAsync();
         }
 
@@ -85,6 +86,44 @@ namespace EFCorePeliculas.Controllers
             if(genero is null) return NotFound();
 
             genero.Nombre += " 2";
+            await context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var genero = await context.Generos.FirstOrDefaultAsync(g => g.Identificador == id);
+
+            if (genero is null) return NotFound();
+
+            context.Remove(genero);
+            await context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete("borradoSuave/{id:int}")]
+        public async Task<ActionResult> DeleteSuave(int id)
+        {
+            var genero = await context.Generos.AsTracking().FirstOrDefaultAsync(g => g.Identificador == id);
+
+            if (genero is null) return NotFound();
+
+            genero.EstaBorrado = true;
+            await context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPost("restaurar/{id:int}")]
+        public async Task<ActionResult> Restaurar(int id)
+        {
+            var genero = await context.Generos.AsTracking()
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(g => g.Identificador == id);
+
+            if (genero is null) return NotFound();
+
+            genero.EstaBorrado = false;
             await context.SaveChangesAsync();
             return Ok();
         }

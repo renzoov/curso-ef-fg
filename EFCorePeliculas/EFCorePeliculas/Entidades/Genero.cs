@@ -13,6 +13,7 @@ namespace EFCorePeliculas.Entidades
         //[Required]
         //[Column("NombreGenero")]
         public string Nombre { get; set; }
+        public bool EstaBorrado { get; set; }
         public HashSet<Pelicula> Peliculas { get; set; }
     }
 }

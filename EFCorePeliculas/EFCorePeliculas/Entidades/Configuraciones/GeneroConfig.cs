@@ -14,6 +14,8 @@ namespace EFCorePeliculas.Entidades.Configuraciones
                 .HasMaxLength(150)
                 .IsRequired();
             //modelBuilder.Entity<Genero>().ToTable("TablaGeneros", "Peliculas"); //nombre tabla y esquema
+
+            builder.HasQueryFilter(g => !g.EstaBorrado);
         }
     }
 }
