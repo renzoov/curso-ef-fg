@@ -4,6 +4,7 @@ using EFCorePeliculas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,10 @@ using NetTopologySuite.Geometries;
 namespace EFCorePeliculas.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230915041003_EjemploConversion")]
+    partial class EjemploConversion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -416,10 +418,6 @@ namespace EFCorePeliculas.Migrations
                     b.Property<int>("CineId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Moneda")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("Precio")
                         .HasPrecision(9, 2)
                         .HasColumnType("decimal(9,2)");
@@ -441,7 +439,6 @@ namespace EFCorePeliculas.Migrations
                         {
                             Id = 1,
                             CineId = 1,
-                            Moneda = "",
                             Precio = 220m,
                             TipoSalaDeCine = "DosDimensiones"
                         },
@@ -449,7 +446,6 @@ namespace EFCorePeliculas.Migrations
                         {
                             Id = 2,
                             CineId = 1,
-                            Moneda = "",
                             Precio = 320m,
                             TipoSalaDeCine = "TresDimensiones"
                         },
@@ -457,7 +453,6 @@ namespace EFCorePeliculas.Migrations
                         {
                             Id = 3,
                             CineId = 2,
-                            Moneda = "",
                             Precio = 200m,
                             TipoSalaDeCine = "DosDimensiones"
                         },
@@ -465,7 +460,6 @@ namespace EFCorePeliculas.Migrations
                         {
                             Id = 4,
                             CineId = 2,
-                            Moneda = "",
                             Precio = 290m,
                             TipoSalaDeCine = "TresDimensiones"
                         },
@@ -473,7 +467,6 @@ namespace EFCorePeliculas.Migrations
                         {
                             Id = 5,
                             CineId = 3,
-                            Moneda = "",
                             Precio = 250m,
                             TipoSalaDeCine = "DosDimensiones"
                         },
@@ -481,7 +474,6 @@ namespace EFCorePeliculas.Migrations
                         {
                             Id = 6,
                             CineId = 3,
-                            Moneda = "",
                             Precio = 330m,
                             TipoSalaDeCine = "TresDimensiones"
                         },
@@ -489,7 +481,6 @@ namespace EFCorePeliculas.Migrations
                         {
                             Id = 7,
                             CineId = 3,
-                            Moneda = "",
                             Precio = 450m,
                             TipoSalaDeCine = "CXC"
                         },
@@ -497,23 +488,9 @@ namespace EFCorePeliculas.Migrations
                         {
                             Id = 8,
                             CineId = 4,
-                            Moneda = "",
                             Precio = 250m,
                             TipoSalaDeCine = "DosDimensiones"
                         });
-                });
-
-            modelBuilder.Entity("EFCorePeliculas.Entidades.SinLlaves.CineSinUbicacion", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nombre")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToView(null);
-
-                    b.ToSqlQuery("select id, nombre from Cines");
                 });
 
             modelBuilder.Entity("GeneroPelicula", b =>

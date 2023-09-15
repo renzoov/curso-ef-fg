@@ -19,6 +19,8 @@ namespace EFCorePeliculas.Controllers
         public async Task<IEnumerable<Genero>> Get()
         {
             //return await context.Generos.Where(x => !x.EstaBorrado).OrderBy(g => g.Nombre).ToListAsync();
+            context.Logs.Add(new Log() { Id = Guid.NewGuid(), Mensaje = "Ejecutando el método GenerosController.Get" });
+            await context.SaveChangesAsync();
             return await context.Generos.OrderBy(g => g.Nombre).ToListAsync();
         }
 
@@ -62,11 +64,18 @@ namespace EFCorePeliculas.Controllers
         [HttpPost]
         public async Task<ActionResult> Post(Genero genero)
         {
-            var estatus1 = context.Entry(genero).State;
+            //var estatus1 = context.Entry(genero).State;
+            //context.Add(genero);
+            //var estatus2 = context.Entry(genero).State;
+            //await context.SaveChangesAsync();
+            //var estatus3 = context.Entry(genero).State;
+
+            var existeGeneroConNombre = await context.Generos.AnyAsync(g => g.Nombre == genero.Nombre);
+
+            if(existeGeneroConNombre) return BadRequest($"Ya existe un género con el nombre {genero.Nombre}.");
+
             context.Add(genero);
-            var estatus2 = context.Entry(genero).State;
             await context.SaveChangesAsync();
-            var estatus3 = context.Entry(genero).State;
             return Ok();
         }
 

@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using EFCorePeliculas.DTOs;
 using EFCorePeliculas.Entidades;
+using EFCorePeliculas.Entidades.SinLlaves;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite;
@@ -20,6 +21,13 @@ namespace EFCorePeliculas.Controllers
         {
             this.context = context;
             this.mapper = mapper;
+        }
+
+        [HttpGet("SinUbicacion")]
+        public async Task<IEnumerable<CineSinUbicacion>> GetCineSinUbicacion()
+        {
+            //return await context.Set<CineSinUbicacion>().ToListAsync();
+            return await context.CinesSinUbicacion.ToListAsync();
         }
 
         [HttpGet]
@@ -69,11 +77,13 @@ namespace EFCorePeliculas.Controllers
                     new SalaDeCine()
                     {
                         Precio = 200,
+                        Moneda = Moneda.PesoDominicano,
                         TipoSalaDeCine = TipoSalaDeCine.DosDimensiones
                     },
                     new SalaDeCine()
                     {
                         Precio = 350,
+                        Moneda = Moneda.DolarEstadounidense,
                         TipoSalaDeCine = TipoSalaDeCine.TresDimensiones
                     }
                 }
