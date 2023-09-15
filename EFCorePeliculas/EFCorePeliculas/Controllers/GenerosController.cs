@@ -21,17 +21,24 @@ namespace EFCorePeliculas.Controllers
             //return await context.Generos.Where(x => !x.EstaBorrado).OrderBy(g => g.Nombre).ToListAsync();
             context.Logs.Add(new Log() { Id = Guid.NewGuid(), Mensaje = "Ejecutando el método GenerosController.Get" });
             await context.SaveChangesAsync();
-            return await context.Generos.OrderBy(g => g.Nombre).ToListAsync();
+            return await context.Generos.OrderByDescending(g => EF.Property<DateTime>(g, "FechaCreacion")).ToListAsync();
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Genero>> Get(int id)
         {
-            var genero = await context.Generos.FirstOrDefaultAsync(g => g.Identificador == id);
+            var genero = await context.Generos.AsTracking().FirstOrDefaultAsync(g => g.Identificador == id);
 
             if (genero is null) return NotFound();
 
-            return genero;
+            var fechaCreacion = context.Entry(genero).Property<DateTime>("FechaCreacion").CurrentValue;
+
+            return Ok(new
+            {
+                Id = genero.Identificador,
+                Nombre = genero.Nombre,
+                fechaCreacion
+            });
         }
 
         [HttpGet("primer")]
