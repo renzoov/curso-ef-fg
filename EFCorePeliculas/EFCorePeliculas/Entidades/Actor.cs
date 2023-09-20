@@ -38,5 +38,8 @@ namespace EFCorePeliculas.Entidades
                 return edad;
             }
         }
+
+        public Direccion DireccionHogar { get; set; }
+        public Direccion BillingAddress { get; set; }
     }
 }

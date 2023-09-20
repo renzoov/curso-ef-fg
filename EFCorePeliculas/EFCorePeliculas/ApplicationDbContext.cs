@@ -26,6 +26,7 @@ namespace EFCorePeliculas
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly()); // 2da forma agregar todas las configuraciones
 
             SeedingModuloConsulta.Seed(modelBuilder);
+            SeedingPersonaMensaje.Seed(modelBuilder);
 
             //modelBuilder.Entity<Actor>().Property(x => x.FechaNacimiento)
             //    .HasColumnType("date");
@@ -67,5 +68,8 @@ namespace EFCorePeliculas
         public DbSet<PeliculaActor> PeliculasActores { get; set; }
         public DbSet<Log> Logs { get; set;}
         public DbSet<CineSinUbicacion> CinesSinUbicacion { get; set; }
+        public DbSet<Persona> Personas { get; set; }
+        public DbSet<Mensaje> Mensajes { get; set; }
+        public DbSet<CineDetalle> CineDetalle { get; set; }
     }
 }

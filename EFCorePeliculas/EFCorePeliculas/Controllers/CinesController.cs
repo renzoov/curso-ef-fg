@@ -66,6 +66,12 @@ namespace EFCorePeliculas.Controllers
             {
                 Nombre = "Mi Cine",
                 Ubicacion = ubicacionCine,
+                CineDetalle = new CineDetalle()
+                {
+                    Historia = "Historia...",
+                    CodigoDeEtica = "Código...",
+                    Misiones = "Misiones..."
+                },
                 CineOferta = new CineOferta()
                 {
                     PorcentajeDescuento = 5,
@@ -109,6 +115,7 @@ namespace EFCorePeliculas.Controllers
             var cineDB = await context.Cines.AsTracking()
                 .Include(c => c.SalasDeCine)
                 .Include(c => c.CineOferta)
+                .Include(c => c.CineDetalle)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (cineDB == null) return NotFound();
@@ -137,6 +144,24 @@ namespace EFCorePeliculas.Controllers
         public async Task<ActionResult> PutCineOferta(CineOferta cineOferta)
         {
             context.Update(cineOferta);
+            await context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var cine = await context.Cines
+                .Include(c => c.SalasDeCine)
+                .Include(c => c.CineOferta)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (cine is null) return NotFound();
+
+            context.RemoveRange(cine.SalasDeCine);
+            await context.SaveChangesAsync();
+
+            context.Remove(cine);
             await context.SaveChangesAsync();
             return Ok();
         }

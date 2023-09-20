@@ -16,6 +16,12 @@ namespace EFCorePeliculas.Entidades.Configuraciones
             builder.Property(x => x.PosterURL)
                 .HasMaxLength(500)
                 .IsUnicode(false);
+
+            //builder.HasMany(x => x.Generos)
+            //    .WithMany(x => x.Peliculas)
+            //    .UsingEntity(x =>
+            //        x.ToTable("GenerosPeliculas")
+            //        .HasData(new { PeliculasId = 1, GenerosIdentificador = 7 }));
         }
     }
 }
