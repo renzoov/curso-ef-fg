@@ -1,4 +1,5 @@
 using EFCorePeliculas;
+using EFCorePeliculas.Servicios;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -18,6 +19,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(opciones =>
     opciones.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
     //opciones.UseLazyLoadingProxies();
 });
+//builder.Services.AddDbContext<ApplicationDbContext>();
+
+builder.Services.AddScoped<IServicioUsuario, ServicioUsuario>();
+builder.Services.AddScoped<IEventosDbContext, EventosDbContext>();
+
+builder.Services.AddScoped<IActualizadorObservableCollection, ActualizadorObservableCollection>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 

@@ -2,6 +2,7 @@
 using EFCorePeliculas.Entidades.Configuraciones;
 using EFCorePeliculas.Entidades.Configuraciones.Seeding;
 using EFCorePeliculas.Entidades.SinLlaves;
+using EFCorePeliculas.Servicios;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -9,13 +10,59 @@ namespace EFCorePeliculas
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions options) : base(options)
+        private readonly IServicioUsuario servicioUsuario;
+
+        public ApplicationDbContext(DbContextOptions options, IServicioUsuario servicioUsuario, IEventosDbContext eventosDbContext) : base(options)
         {
+            this.servicioUsuario = servicioUsuario;
+
+            if(eventosDbContext is not null)
+            {
+                //ChangeTracker.Tracked += eventosDbContext.ManejarTracked;
+                //ChangeTracker.StateChanged += eventosDbContext.ManejarStateChange;
+                SavingChanges += eventosDbContext.ManejarSavingChanges;
+                SavedChanges += eventosDbContext.ManejarSavedChanges;
+                SaveChangesFailed += eventosDbContext.ManejarSaveChangesFailed;
+            }
         }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
             configurationBuilder.Properties<DateTime>().HaveColumnType("date");
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ProcesarSalvado();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ProcesarSalvado()
+        {
+            foreach (var item in ChangeTracker.Entries().Where( e => e.State == EntityState.Added && e.Entity is EntidadAuditable))
+            {
+                var entidad = item.Entity as EntidadAuditable;
+                entidad.UsuarioCreacion = servicioUsuario.ObtenerUsuarioId();
+                entidad.UsuarioModificacion = servicioUsuario.ObtenerUsuarioId();
+            }
+
+            foreach (var item in ChangeTracker.Entries().Where(e => e.State == EntityState.Modified && e.Entity is EntidadAuditable))
+            {
+                var entidad = item.Entity as EntidadAuditable;
+                entidad.UsuarioModificacion = servicioUsuario.ObtenerUsuarioId();
+                item.Property(nameof(entidad.UsuarioCreacion)).IsModified = false;
+            }
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("name=DefaultConnection", opciones =>
+                {
+                    opciones.UseNetTopologySuite();
+                }).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -44,7 +91,23 @@ namespace EFCorePeliculas
 
             modelBuilder.Entity<CineSinUbicacion>().HasNoKey().ToSqlQuery("select id, nombre from Cines").ToView(null);
 
-            modelBuilder.Entity<PeliculaConConteos>().HasNoKey().ToView("PeliculasConConteos");
+            //modelBuilder.Entity<PeliculaConConteos>().HasNoKey().ToView("PeliculasConConteos");
+
+            modelBuilder.Entity<PeliculaConConteos>().ToSqlQuery(@"
+                Select Id, Titulo,
+                (Select count(*)
+                from GeneroPelicula
+                WHERE PeliculasId = Peliculas.Id) as CantidadGeneros,
+                (Select count(distinct CineId)
+                FROM PeliculaSalaDeCine
+                INNER JOIN SalasDeCine
+                ON SalasDeCine.Id = PeliculaSalaDeCine.SalasDeCineId
+                WHERE PeliculasId = Peliculas.Id) as CantidadCines,
+                (
+                Select count(*)
+                FROM PeliculasActores
+                where PeliculaId = Peliculas.Id) as CantidadActores
+                FROM Peliculas");
 
             foreach(var tipoEntidad in modelBuilder.Model.GetEntityTypes())
             {
@@ -98,5 +161,7 @@ namespace EFCorePeliculas
         public DbSet<CineDetalle> CineDetalle { get; set; }
         public DbSet<Pago> Pagos { get; set; }
         public DbSet<Producto> Productos { get; set; }
+        public DbSet<Factura> Facturas { get; set; }
+        public DbSet<FacturaDetalle> FacturaDetalles { get; set; }
     }
 }

@@ -8,6 +8,8 @@ namespace EFCorePeliculas.Entidades.Configuraciones
     {
         public void Configure(EntityTypeBuilder<Cine> builder)
         {
+            builder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangedNotifications);
+
             builder.Property(x => x.Nombre)
                 .HasMaxLength(150)
                 .IsRequired();

@@ -4,6 +4,7 @@ using EFCorePeliculas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,10 @@ using NetTopologySuite.Geometries;
 namespace EFCorePeliculas.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230926203653_GeneroAuditable")]
+    partial class GeneroAuditable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -218,47 +220,6 @@ namespace EFCorePeliculas.Migrations
                             FechaInicio = new DateTime(2023, 9, 26, 0, 0, 0, 0, DateTimeKind.Local),
                             PorcentajeDescuento = 15m
                         });
-                });
-
-            modelBuilder.Entity("EFCorePeliculas.Entidades.Factura", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Facturas");
-                });
-
-            modelBuilder.Entity("EFCorePeliculas.Entidades.FacturaDetalle", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("FacturaId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Precio")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Producto")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacturaId");
-
-                    b.ToTable("FacturaDetalles");
                 });
 
             modelBuilder.Entity("EFCorePeliculas.Entidades.Genero", b =>
@@ -730,10 +691,6 @@ namespace EFCorePeliculas.Migrations
 
             modelBuilder.Entity("EFCorePeliculas.Entidades.SinLlaves.PeliculaConConteos", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
                     b.Property<int>("CantidadActores")
                         .HasColumnType("int");
 
@@ -743,12 +700,13 @@ namespace EFCorePeliculas.Migrations
                     b.Property<int>("CantidadGeneros")
                         .HasColumnType("int");
 
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
                     b.Property<string>("Titulo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
-
-                    b.ToSqlQuery("\r\n                Select Id, Titulo,\r\n                (Select count(*)\r\n                from GeneroPelicula\r\n                WHERE PeliculasId = Peliculas.Id) as CantidadGeneros,\r\n                (Select count(distinct CineId)\r\n                FROM PeliculaSalaDeCine\r\n                INNER JOIN SalasDeCine\r\n                ON SalasDeCine.Id = PeliculaSalaDeCine.SalasDeCineId\r\n                WHERE PeliculasId = Peliculas.Id) as CantidadCines,\r\n                (\r\n                Select count(*)\r\n                FROM PeliculasActores\r\n                where PeliculaId = Peliculas.Id) as CantidadActores\r\n                FROM Peliculas");
+                    b.ToView("PeliculasConConteos");
                 });
 
             modelBuilder.Entity("GeneroPelicula", b =>
@@ -1096,15 +1054,6 @@ namespace EFCorePeliculas.Migrations
                     b.HasOne("EFCorePeliculas.Entidades.Cine", null)
                         .WithOne("CineOferta")
                         .HasForeignKey("EFCorePeliculas.Entidades.CineOferta", "CineId");
-                });
-
-            modelBuilder.Entity("EFCorePeliculas.Entidades.FacturaDetalle", b =>
-                {
-                    b.HasOne("EFCorePeliculas.Entidades.Factura", null)
-                        .WithMany()
-                        .HasForeignKey("FacturaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("EFCorePeliculas.Entidades.Mensaje", b =>

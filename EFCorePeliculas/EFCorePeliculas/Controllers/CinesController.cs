@@ -3,10 +3,12 @@ using AutoMapper.QueryableExtensions;
 using EFCorePeliculas.DTOs;
 using EFCorePeliculas.Entidades;
 using EFCorePeliculas.Entidades.SinLlaves;
+using EFCorePeliculas.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
+using System.Collections.ObjectModel;
 
 namespace EFCorePeliculas.Controllers
 {
@@ -16,11 +18,14 @@ namespace EFCorePeliculas.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private readonly IActualizadorObservableCollection actualizadorObservableCollection;
 
-        public CinesController(ApplicationDbContext context, IMapper mapper)
+        public CinesController(ApplicationDbContext context, IMapper mapper, 
+            IActualizadorObservableCollection actualizadorObservableCollection)
         {
             this.context = context;
             this.mapper = mapper;
+            this.actualizadorObservableCollection = actualizadorObservableCollection;
         }
 
         [HttpGet("SinUbicacion")]
@@ -78,7 +83,7 @@ namespace EFCorePeliculas.Controllers
                     FechaInicio = DateTime.Now,
                     FechaFin = DateTime.Now.AddDays(7)
                 },
-                SalasDeCine = new HashSet<SalaDeCine>()
+                SalasDeCine = new ObservableCollection<SalaDeCine>()
                 {
                     new SalaDeCine()
                     {
@@ -112,7 +117,14 @@ namespace EFCorePeliculas.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CineDTO>> Get(int id)
         {
-            var cineDB = await context.Cines.AsTracking()
+            //var cineDB = await context.Cines.AsTracking()
+            //    .Include(c => c.SalasDeCine)
+            //    .Include(c => c.CineOferta)
+            //    .Include(c => c.CineDetalle)
+            //    .FirstOrDefaultAsync(c => c.Id == id);
+
+            var cineDB = await context.Cines
+                .FromSqlInterpolated($"SELECT * FROM Cines WHERE Id = {id}")
                 .Include(c => c.SalasDeCine)
                 .Include(c => c.CineOferta)
                 .Include(c => c.CineDetalle)
@@ -136,6 +148,7 @@ namespace EFCorePeliculas.Controllers
 
 
             cineDB = mapper.Map(cineCreacionDTO, cineDB);
+            actualizadorObservableCollection.Actualizar(cineDB.SalasDeCine, cineCreacionDTO.SalasDeCines);
             await context.SaveChangesAsync();
             return Ok();
         }
