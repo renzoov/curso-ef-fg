@@ -12,6 +12,8 @@ namespace EFCorePeliculas.Servicios
         {
             CreateMap<Actor, ActorDTO>();
 
+            CreateMap<GeneroActualizacionDTO, Genero>();
+
             CreateMap<Cine, CineDTO>()
                 .ForMember(dto => dto.Latitud, ent => ent.MapFrom(prop => prop.Ubicacion.Y))
                 .ForMember(dto => dto.Longitud, ent => ent.MapFrom(prop => prop.Ubicacion.X));

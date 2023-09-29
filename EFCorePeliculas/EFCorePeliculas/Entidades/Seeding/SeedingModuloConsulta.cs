@@ -2,7 +2,7 @@
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 
-namespace EFCorePeliculas.Entidades.Configuraciones.Seeding
+namespace EFCorePeliculas.Entidades.Seeding
 {
     public static class SeedingModuloConsulta
     {
@@ -25,7 +25,7 @@ namespace EFCorePeliculas.Entidades.Configuraciones.Seeding
             var scarlettJohansson = new Actor { Id = 7, Nombre = "Scarlett Johansson", FechaNacimiento = new DateTime(1984, 11, 22) };
             var keanuReeves = new Actor { Id = 8, Nombre = "Keanu Reeves", FechaNacimiento = new DateTime(1964, 9, 2) };
 
-            modelBuilder.Entity<Actor>().HasData(tomHolland, samuelLJackson, 
+            modelBuilder.Entity<Actor>().HasData(tomHolland, samuelLJackson,
                 robertDowneyJr, chrisEvans, laRoca, auliCarvalho, scarlettJohansson, keanuReeves);
 
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
@@ -63,7 +63,7 @@ namespace EFCorePeliculas.Entidades.Configuraciones.Seeding
 
             modelBuilder.Entity(entidadGeneroPelicula).HasData(
                 new Dictionary<string, object> { [generoIdPropiedad] = accion.Identificador, [peliculaIdPropiedad] = avengers.Id },
-                new Dictionary<string, object> { [generoIdPropiedad] = cienciaFiccion.Identificador, [peliculaIdPropiedad] = avengers.Id});
+                new Dictionary<string, object> { [generoIdPropiedad] = cienciaFiccion.Identificador, [peliculaIdPropiedad] = avengers.Id });
 
             var coco = new Pelicula()
             {

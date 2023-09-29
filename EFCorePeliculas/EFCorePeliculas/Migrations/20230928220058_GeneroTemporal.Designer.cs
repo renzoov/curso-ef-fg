@@ -4,6 +4,7 @@ using EFCorePeliculas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,10 @@ using NetTopologySuite.Geometries;
 namespace EFCorePeliculas.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230928220058_GeneroTemporal")]
+    partial class GeneroTemporal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,18 +232,8 @@ namespace EFCorePeliculas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("Desde")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("Desde");
-
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("date");
-
-                    b.Property<DateTime>("Hasta")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("Hasta");
 
                     b.Property<int>("NumeroFactura")
                         .ValueGeneratedOnAdd()
@@ -255,19 +247,7 @@ namespace EFCorePeliculas.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Facturas", (string)null);
-
-                    b.ToTable(tb => tb.IsTemporal(ttb =>
-                        {
-                            ttb.UseHistoryTable("FacturasHistorico");
-                            ttb
-                                .HasPeriodStart("Desde")
-                                .HasColumnName("Desde");
-                            ttb
-                                .HasPeriodEnd("Hasta")
-                                .HasColumnName("Hasta");
-                        }
-                    ));
+                    b.ToTable("Facturas");
 
                     b.HasData(
                         new

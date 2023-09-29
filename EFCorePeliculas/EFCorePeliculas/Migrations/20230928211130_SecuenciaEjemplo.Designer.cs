@@ -4,6 +4,7 @@ using EFCorePeliculas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,10 @@ using NetTopologySuite.Geometries;
 namespace EFCorePeliculas.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230928211130_SecuenciaEjemplo")]
+    partial class SecuenciaEjemplo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,44 +232,17 @@ namespace EFCorePeliculas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("Desde")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("Desde");
-
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("date");
-
-                    b.Property<DateTime>("Hasta")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("Hasta");
 
                     b.Property<int>("NumeroFactura")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValueSql("NEXT VALUE FOR factura.NumeroFactura");
 
-                    b.Property<byte[]>("Version")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Facturas", (string)null);
-
-                    b.ToTable(tb => tb.IsTemporal(ttb =>
-                        {
-                            ttb.UseHistoryTable("FacturasHistorico");
-                            ttb
-                                .HasPeriodStart("Desde")
-                                .HasColumnName("Desde");
-                            ttb
-                                .HasPeriodEnd("Hasta")
-                                .HasColumnName("Hasta");
-                        }
-                    ));
+                    b.ToTable("Facturas");
 
                     b.HasData(
                         new
@@ -461,20 +436,9 @@ namespace EFCorePeliculas.Migrations
                         .HasDefaultValueSql("GetDate()");
 
                     b.Property<string>("Nombre")
-                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
-
-                    b.Property<DateTime>("PeriodEnd")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodEnd");
-
-                    b.Property<DateTime>("PeriodStart")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodStart");
 
                     b.Property<string>("UsuarioCreacion")
                         .HasMaxLength(150)
@@ -490,18 +454,7 @@ namespace EFCorePeliculas.Migrations
                         .IsUnique()
                         .HasFilter("EstaBorrado = false");
 
-                    b.ToTable("Generos", (string)null);
-
-                    b.ToTable(tb => tb.IsTemporal(ttb =>
-                        {
-                            ttb
-                                .HasPeriodStart("PeriodStart")
-                                .HasColumnName("PeriodStart");
-                            ttb
-                                .HasPeriodEnd("PeriodEnd")
-                                .HasColumnName("PeriodEnd");
-                        }
-                    ));
+                    b.ToTable("Generos");
 
                     b.HasData(
                         new

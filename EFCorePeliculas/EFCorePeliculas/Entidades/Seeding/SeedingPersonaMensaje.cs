@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace EFCorePeliculas.Entidades.Configuraciones.Seeding
+namespace EFCorePeliculas.Entidades.Seeding
 {
     public static class SeedingPersonaMensaje
     {
