@@ -23,8 +23,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(opciones =>
 
 builder.Services.AddScoped<IServicioUsuario, ServicioUsuario>();
 builder.Services.AddScoped<IEventosDbContext, EventosDbContext>();
-
 builder.Services.AddScoped<IActualizadorObservableCollection, ActualizadorObservableCollection>();
+
+builder.Services.AddSingleton<Singleton>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
